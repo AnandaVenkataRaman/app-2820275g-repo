@@ -1,1 +1,14 @@
-test
+pipeline {
+    agent any
+
+    stages {
+
+        stage('stg1-2820275g') {
+            steps {
+                echo "stg1-2820275g: Release environment is ready."
+            }
+        }
+ 
+
+	}
+}
