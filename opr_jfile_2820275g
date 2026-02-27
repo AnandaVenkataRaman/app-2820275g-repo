@@ -13,7 +13,7 @@ pipeline {
 			steps {
 				script {
 					// Replace with the actual URL of your testsvr container
-					def testsvrUrl = 'http://testsvr_2820275g:80'  
+					def testsvrUrl = 'http://192.168.150.210:80'  
 					
 					// Run curl and capture result
 					def response = sh(
