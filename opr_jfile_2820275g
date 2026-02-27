@@ -1,14 +1,55 @@
-pipeline {
+ipeline {
     agent any
 
     stages {
 
         stage('stg1-2820275g') {
             steps {
-                echo "stg1-2820275g: Release environment is ready."
+                echo "stg1-2820275g: Both testsvr_2820275g & appsvr_2820275g preparation check pass."
             }
         }
  
+		stage('stg2-2820275g') {
+			steps {
+				script {
+					// Replace with the actual URL of your testsvr container
+					def testsvrUrl = 'http://testsvr_2820275g:80'  
+					
+					// Run curl and capture result
+					def response = sh(
+						script: "curl -s -o /dev/null -w \"%{http_code}\" ${testsvrUrl}",
+						returnStdout: true
+					).trim()
 
+					// Check if HTTP response is 200
+					if (response == '200') {
+						echo "stg2_2820275g: testsvr’s website is running"
+						
+						// Prompt user to proceed
+						def proceed = input(
+							message: 'Proceed to update testsvr server?',
+							parameters: [
+								[$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Proceed']
+							]
+						)
+						
+						if (proceed) {
+							echo "Proceeding to Stage 3..."
+							// Set a flag to allow Stage 3
+							env.STAGE2_OK = "true"
+						} else {
+							echo "User chose NOT to proceed. Aborting pipeline."
+							error("Pipeline aborted by user at Stage 2")
+						}
+						
+					} else {
+						echo "stg2_2820275g: testsvr’s website is down"
+						error("Pipeline aborted because testsvr is down")
+					}
+				}
+			}
+		}
+	
+	
 	}
 }
