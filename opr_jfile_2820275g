@@ -49,38 +49,7 @@ pipeline {
 				}
 			}
 		}
-		stage('stg3-2820275g') {
-			steps {
-				script {
-					
-					echo "Checking and removing old backup image (if exists)..."
-
-					// Remove old backup image if it exists
-					sh '''
-					if docker images -q testsvr_image | grep -q .; then
-						echo "Old backup image found. Removing..."
-						docker rmi -f testsvr_image
-					else
-						echo "No old backup image found."
-					fi
-					'''
-
-					echo "Creating new backup image from testsvr_2820275g..."
-
-					// Create new backup image
-					sh 'docker commit testsvr_2820275g testsvr_image'
-
-					echo "Executing bolt command to update index.html..."
-
-					// Execute bolt command inside container
-					sh '''
-					docker exec testsvr_2820275g bolt ...... 
-					'''
-
-					echo "stg3_testsvr_2820275g: testsvr_2820275g is backup and updated"
-				}
-			}
-		}
+		
 	
 	}
 }
