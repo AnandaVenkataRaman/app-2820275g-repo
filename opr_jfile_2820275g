@@ -77,6 +77,34 @@ pipeline {
 				}
 			}
 		}
+		stage('stg4-2820275g') {
+			steps {
+				script {
+
+					echo "Checking if testsvr_2820275g website is running..."
+
+					// Perform curl check
+					def status = sh(
+						script: "curl -s -o /dev/null -w '%{http_code}' http://localhost",
+						returnStdout: true
+					).trim()
+
+					if (status == "200") {
+
+						echo "stg4_2820275g_: testsvr’s website is running after update"
+
+						// Manual confirmation before Stage 5
+						input message: "Proceed to update appsvr server?"
+
+					} else {
+
+						echo "stg4_2820275g_: testsvr’s website is down"
+
+						error("Aborting pipeline because testsvr_2820275g is down.")
+					}
+				}
+			}
+		}
 	
 	}
 }
