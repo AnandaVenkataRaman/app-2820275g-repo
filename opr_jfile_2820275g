@@ -55,7 +55,6 @@ pipeline {
 
 					echo "Checking and removing old backup image (if exists)..."
 
-					// Remove old backup image if it exists
 					sh '''
 					if docker images -q testsvr_image | grep -q .; then
 						echo "Old backup image found. Removing..."
@@ -66,15 +65,12 @@ pipeline {
 					'''
 
 					echo "Creating new backup image from testsvr_2820275g..."
-
-					// Create new backup image
 					sh 'docker commit testsvr_2820275g testsvr_image'
 
-					echo "Executing bolt command to update index.html..."
+					echo "Updating index.html inside container..."
 
-					// Run bolt from Jenkins host (NOT inside container)
 					sh '''
-					bolt ...... 
+					docker exec testsvr_2820275g sh -c "echo 'Updated by stg3_2820275g' > /usr/share/nginx/html/index.html"
 					'''
 
 					echo "stg3_testsvr_2820275g: testsvr_2820275g is backup and updated"
