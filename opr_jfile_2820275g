@@ -134,7 +134,7 @@ pipeline {
 
 					// Update index.html inside container
 					sh '''
-					docker exec appsvr_2820275g sh -c "echo 'Updated by stg5_2820275g' > /usr/share/nginx/html/index.html"
+					docker exec appsvr_2820275g sh -c "echo 'Updated by stg5_2820275g' > /usr/share/apache2/default-site/index.html"
 					'''
 
 					echo "stg5_2820275g: appsvr_2820275g web server is backup and updated"
