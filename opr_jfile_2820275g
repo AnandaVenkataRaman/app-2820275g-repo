@@ -108,6 +108,42 @@ pipeline {
 				}
 			}
 		}
+		stage('stg5-2820275g') {
+			steps {
+				script {
+
+					echo "Checking and removing old backup image (if exists)..."
+
+					// Remove old backup image if it exists
+					sh '''
+					if docker images -q appsvr_image | grep -q .; then
+						echo "Old backup image found. Removing..."
+						docker rmi -f appsvr_image
+					else
+						echo "No old backup image found."
+					fi
+					'''
+
+					echo "Creating new backup image from appsvr_2820275g..."
+
+					// Create new backup image
+					sh 'docker commit appsvr_2820275g appsvr_image'
+
+					echo "Executing Bolt command to update index.html..."
+
+					// 🔹 Update index.html using Bolt
+					sh '''
+					bolt command run "echo 'Updated by stg5_2820275g using Bolt' > /usr/share/apache2/default-site/index.html" \
+					--targets 192.168.150.211 \
+					--user 2820275g \
+					--password 2820275gpwd \
+					--no-host-key-check
+					'''
+
+					echo "stg5_2820275g: appsvr_2820275g web server is backup and updated"
+				}
+			}
+		}
 	
 	}
 }
