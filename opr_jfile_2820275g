@@ -12,7 +12,6 @@ pipeline {
 		stage('stg2-2820275g') {
 			steps {
 				script {
-					// Replace with the actual URL of your testsvr container
 					def testsvrUrl = 'http://192.168.150.210:80'  
 					
 					// Run curl and capture result
@@ -83,13 +82,15 @@ pipeline {
 
 					echo "Checking if testsvr_2820275g website is running..."
 
-					// Perform curl check
-					def status = sh(
-						script: "curl -s -o /dev/null -w '%{http_code}' http://localhost",
+					/def testsvrUrl = 'http://192.168.150.210:80'  
+					
+					// Run curl and capture result
+					def response = sh(
+						script: "curl -s -o /dev/null -w \"%{http_code}\" ${testsvrUrl}",
 						returnStdout: true
 					).trim()
 
-					if (status == "200") {
+					if (response == '200') {
 
 						echo "stg4_2820275g_: testsvr’s website is running after update"
 
