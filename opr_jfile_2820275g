@@ -82,13 +82,15 @@ pipeline {
 
 					echo "Checking if testsvr_2820275g website is running..."
 
-					/def testsvrUrl = 'http://192.168.150.210:80'  
-					
-					// Run curl and capture result
+					def testsvrUrl = 'http://192.168.150.210:80'
+
+					// Run curl and capture HTTP status code
 					def response = sh(
-						script: "curl -s -o /dev/null -w \"%{http_code}\" ${testsvrUrl}",
+						script: "curl -s -o /dev/null -w '%{http_code}' ${testsvrUrl}",
 						returnStdout: true
 					).trim()
+
+					echo "HTTP Response Code: ${response}"
 
 					if (response == '200') {
 
