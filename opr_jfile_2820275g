@@ -141,6 +141,55 @@ pipeline {
 				}
 			}
 		}
-			
+		stage('stg6-2820275g') {
+			steps {
+				script {
+
+					echo "Performing web test for testsvr_2820275g..."
+
+					// Test testsvr and save first HTTP header line
+					sh 'curl -Is http://192.168.150.210:80 | head -n 1 > /tmp/testsvr-result-file'
+
+					echo "Checking testsvr-result-file..."
+					def testsvr_result = sh(script: 'cat /tmp/testsvr-result-file', returnStdout: true).trim()
+					echo "testsvr-result-file content: ${testsvr_result}"
+
+					echo "Performing web test for appsvr_2820275g..."
+
+					// Test appsvr and save first HTTP header line
+					sh 'curl -Is http://192.168.160.220:80 | head -n 1 > /tmp/appsvr-result-file'
+
+					echo "Checking appsvr-result-file..."
+					def appsvr_result = sh(script: 'cat /tmp/appsvr-result-file', returnStdout: true).trim()
+					echo "appsvr-result-file content: ${appsvr_result}"
+
+					// Evaluate appsvr status
+					if (appsvr_result.contains("200 OK")) {
+						echo "stg6_2820275g: appsvr website is operational"
+					} else {
+
+						// Prompt user for action if appsvr is down
+						def userChoice = input(
+							message: "Appsvr is down. Choose action:",
+							parameters: [
+								choice(
+									choices: ['Trigger roll back', 'Troubleshooting'],
+									description: 'Select action',
+									name: 'ACTION'
+								)
+							]
+						)
+
+						if (userChoice == "Trigger roll back") {
+							echo "stg6_2820275g: Production website is rolling back"
+						} else if (userChoice == "Troubleshooting") {
+							echo "stg6_2820275g: Troubleshooting of Production website starts"
+						}
+					}
+
+					echo "Stage 6 completed. Pipeline ends here."
+				}
+			}
+		}	
 	}
 }
