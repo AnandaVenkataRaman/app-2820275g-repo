@@ -112,33 +112,30 @@ pipeline {
 			steps {
 				script {
 
-					echo "Checking and removing old backup image (if exists)..."
-
-					// Remove old backup image if it exists
+					echo "Removing old backup image if exists..."
 					sh '''
 					if docker images -q appsvr_image | grep -q .; then
-						echo "Old backup image found. Removing..."
 						docker rmi -f appsvr_image
-					else
-						echo "No old backup image found."
 					fi
 					'''
 
-					echo "Creating new backup image from appsvr_2820275g..."
-
-					// Create new backup image
+					echo "Creating new backup image..."
 					sh 'docker commit appsvr_2820275g appsvr_image'
 
-					echo "Executing Bolt command to update index.html..."
+					echo "Updating index.html using Bolt..."
 
-					// 🔹 Update index.html using Bolt
-					sh '''
-					bolt command run "echo 'Updated by stg5_2820275g using Bolt' > /usr/share/apache2/default-site/index.html" \
-					--targets 192.168.160.220 \
-					--user dockeradm \
-					--password docker!2 \
-					--no-host-key-check
-					'''
+					withCredentials([usernamePassword(credentialsId: 'bolt-creds', 
+													  usernameVariable: 'BOLT_USER', 
+													  passwordVariable: 'BOLT_PASS')]) {
+
+						sh '''
+						bolt command run "echo 'Updated by stg5_2820275g using Bolt' | sudo tee /usr/share/apache2/default-site/index.html" \
+						--nodes 192.168.160.220 \
+						--user $BOLT_USER \
+						--password '$BOLT_PASS' \
+						--no-host-key-check
+						'''
+					}
 
 					echo "stg5_2820275g: appsvr_2820275g web server is backup and updated"
 				}
