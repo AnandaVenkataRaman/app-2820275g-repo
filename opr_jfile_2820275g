@@ -52,7 +52,7 @@ pipeline {
 		stage('stg3-2820275g') {
 			steps {
 				script {
-					
+
 					echo "Checking and removing old backup image (if exists)..."
 
 					// Remove old backup image if it exists
@@ -72,9 +72,9 @@ pipeline {
 
 					echo "Executing bolt command to update index.html..."
 
-					// Execute bolt command inside container
+					// Run bolt from Jenkins host (NOT inside container)
 					sh '''
-					docker exec testsvr_2820275g bolt ...... 
+					bolt ...... 
 					'''
 
 					echo "stg3_testsvr_2820275g: testsvr_2820275g is backup and updated"
