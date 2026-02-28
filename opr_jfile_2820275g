@@ -134,9 +134,9 @@ pipeline {
 					// 🔹 Update index.html using Bolt
 					sh '''
 					bolt command run "echo 'Updated by stg5_2820275g using Bolt' > /usr/share/apache2/default-site/index.html" \
-					--targets 192.168.150.211 \
-					--user 2820275g \
-					--password 2820275gpwd \
+					--targets 192.168.160.220 \
+					--user dockeradm \
+					--password docker!2 \
 					--no-host-key-check
 					'''
 
